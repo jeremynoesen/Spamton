@@ -1,8 +1,15 @@
-from random import randint
-from discord import Interaction, Message, Client, Intents, app_commands, utils
-from dotenv import load_dotenv
-from os import getenv
+"""
+Spamton is a Discord bot that applies Spamton's typing quirk to messages.
+
+Written by Jeremy Noesen
+"""
+
 from logging import getLogger
+from os import getenv
+from discord import Intents, Game, utils
+from discord.app_commands import AppInstallationType, AppCommandContext
+from dotenv import load_dotenv
+from discord.ext.commands import Bot
 
 # Set up logger
 utils.setup_logging()
@@ -11,84 +18,63 @@ logger = getLogger(__name__)
 # Load environment variables from .env file
 load_dotenv(override=True)
 
-# Initialize Discord client and command tree
-client = Client(intents=Intents.default())
-command_tree = app_commands.CommandTree(client)
+# List of cogs to load
+cogs = [
+    "cogs.dealmaker"
+]
 
-@command_tree.context_menu(name="Dealmaker")
-async def dealmaker(interaction: Interaction, message: Message):
+
+class Spamton(Bot):
     """
-    Make Spamton say a message in his signature style.
-    :param interaction: Interaction created by the context menu command
-    :param message: Message the command was run on
-    :return: None
+    Main bot class for Spamton
     """
 
-    # Split up message by words
-    words = message.content.split(" ")
 
-    # Variables to keep track of processing state
-    output = ""
-    inside = False
+    def __init__(self):
+        """
+        Initialize the bot with command prefix, intents, and allowed contexts
+        """
 
-    # Iterate through each word
-    for word in words:
-
-        # Randomly decide whether to format the word in brackets
-        if randint(0, 4) == 0 or inside:
-
-            # Start a new bracket
-            if not inside:
-                output += "[["
-
-            # Add word in titlecase
-            output += word[0].upper() + word[1:].lower()
-
-            # Randomly decide whether to close the bracket
-            if randint(0, 1) == 0:
-                output += "]] "
-                inside = False
-
-            # Otherwise, keep the bracket open
-            else:
-                output += " "
-                inside = True
-
-        # If not inside brackets, just add the word in uppercase
-        else:
-            output += word.upper() + " "
-
-    # Clean up the output
-    output = output.rstrip()
-
-    # If still inside brackets, close them
-    if inside:
-        output += "]]"
-
-    # Send the final output as a response to the interaction
-    await interaction.response.send_message(output)
+        super().__init__(command_prefix="/", intents=Intents.default(), allowed_installs=AppInstallationType(guild=True, user=True), allowed_contexts=AppCommandContext(guild=True, dm_channel=True, private_channel=True), activity=Game(""))
 
 
-@client.event
-async def setup_hook():
-    """
-    Sync command tree globally.
-    :return: None
-    """
+    async def setup_hook(self):
+        """
+        Upload assets, load cogs, and sync command tree globally.
+        :return: None
+        """
 
-    await command_tree.sync()
-    logger.info("Command tree synced")
+        # Set bot avatar if it is missing
+        if self.user.avatar is None:
+            with open("image/profile/avatar.png", "rb") as file:
+                await self.user.edit(avatar=file.read())
+                logger.info("Uploaded avatar")
+
+        # Set bot banner if it is missing
+        if (await self.fetch_user(self.user.id)).banner is None:
+            with open("image/profile/banner.png", "rb") as file:
+                await self.user.edit(banner=file.read())
+                logger.info("Uploaded banner")
+
+        # Load each cog from the COGS list
+        for cog in cogs:
+            await self.load_extension(cog)
+            logger.info(f"Loaded cog: {cog}")
+
+        # Sync command tree globally
+        await self.tree.sync()
+        logger.info("Command tree synced")
 
 
-@client.event
-async def on_ready():
-    """
-    Indicate that the bot is ready.
-    :return: None
-    """
+    async def on_ready(self):
+        """
+        Indicate that the bot is ready.
+        :return: None
+        """
 
-    logger.info(f"Logged in: {client.user}")
+        logger.info(f"Logged in: {self.user}")
+
 
 # Run the bot
 if __name__ == "__main__":
-    client.run(str(getenv("DISCORD_BOT_TOKEN")), log_handler=None)
+    Spamton().run(str(getenv("DISCORD_BOT_TOKEN")), log_handler=None)
