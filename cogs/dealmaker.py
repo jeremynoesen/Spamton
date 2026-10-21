@@ -13,6 +13,14 @@ from discord.app_commands import ContextMenu
 # Set up logger
 logger = getLogger(__name__)
 
+# Words to misspell
+misspelled_words = {
+    "generosity": "genorisity",
+    "guarantee": "guaranttee",
+    "delicious": "delicis",
+    "special": "specil"
+}
+
 
 class Dealmaker(Cog):
     """
@@ -42,7 +50,7 @@ class Dealmaker(Cog):
         """
 
         # Split up message by words
-        words = message.content.split(" ")
+        words = message.content.lower().split(" ")
 
         # Variables to keep track of processing state
         output = ""
@@ -50,6 +58,10 @@ class Dealmaker(Cog):
 
         # Iterate through each word
         for word in words:
+
+            # Replace words that need to be misspelled
+            if word in misspelled_words:
+                word = misspelled_words[word]
 
             # Randomly decide whether to format the word in brackets
             if randint(0, 4) == 0 or inside:
@@ -59,7 +71,7 @@ class Dealmaker(Cog):
                     output += "[["
 
                 # Add word in titlecase
-                output += word[0].upper() + word[1:].lower()
+                output += word.title()
 
                 # Randomly decide whether to close the bracket
                 if randint(0, 1) == 0:
