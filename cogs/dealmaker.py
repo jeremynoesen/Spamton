@@ -50,7 +50,7 @@ class Dealmaker(Cog):
         """
 
         # Split up message by words
-        words = message.content.lower().split(" ")
+        words = message.content.lower().split()
 
         # Variables to keep track of processing state
         output = ""
