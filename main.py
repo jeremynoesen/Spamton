@@ -35,7 +35,7 @@ class Spamton(Bot):
         Initialize the bot with command prefix, intents, and allowed contexts
         """
 
-        super().__init__(command_prefix="/", intents=Intents.default(), allowed_installs=AppInstallationType(guild=True, user=True), allowed_contexts=AppCommandContext(guild=True, dm_channel=True, private_channel=True), activity=Game(""))
+        super().__init__(command_prefix="/", intents=Intents.default(), allowed_installs=AppInstallationType(guild=True, user=True), allowed_contexts=AppCommandContext(guild=True, dm_channel=True, private_channel=True))
 
 
     async def setup_hook(self):
