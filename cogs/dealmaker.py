@@ -9,6 +9,8 @@ from random import randint
 from discord import Interaction, Message
 from discord.ext.commands import Cog
 from discord.app_commands import ContextMenu
+from emoji import replace_emoji
+from re import sub
 
 # Set up logger
 logger = getLogger(__name__)
@@ -50,7 +52,7 @@ class Dealmaker(Cog):
         """
 
         # Split up message by words
-        words = message.content.lower().split()
+        words = replace_emoji(sub(r"<a?:\w+:\d+>", "", message.content), "").lower().split()
 
         # Variables to keep track of processing state
         output = ""
