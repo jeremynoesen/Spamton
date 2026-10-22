@@ -64,7 +64,7 @@ class Dealmaker(Cog):
                 word = misspelled_words[word]
 
             # Randomly decide whether to format the word in brackets
-            if randint(0, 4) == 0 or inside:
+            if inside or randint(0, 4) == 0:
 
                 # Start a new bracket
                 if not inside:
