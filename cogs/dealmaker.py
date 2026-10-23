@@ -54,6 +54,9 @@ class Dealmaker(Cog):
         # Split up message by words
         words = replace_emoji(sub(r"<a?:\w+:\d+>", "", message.content), "").lower().split()
 
+        # Number of characters to use for the entire message per bracket
+        brackets = randint(1, 2)
+
         # Variables to keep track of processing state
         output = ""
         inside = False
@@ -70,14 +73,14 @@ class Dealmaker(Cog):
 
                 # Start a new bracket
                 if not inside:
-                    output += "[["
+                    output += "[" * brackets
 
                 # Add word in titlecase
                 output += word.title()
 
                 # Randomly decide whether to close the bracket
                 if randint(0, 1) == 0:
-                    output += "]] "
+                    output += "]" * brackets + " "
                     inside = False
 
                 # Otherwise, keep the bracket open
@@ -94,7 +97,7 @@ class Dealmaker(Cog):
 
         # If still inside brackets, close them
         if inside:
-            output += "]]"
+            output += "]" * brackets
 
         # Send the final output as a response to the interaction
         await interaction.response.send_message(output)
