@@ -99,6 +99,9 @@ class Dealmaker(Cog):
         if inside:
             output += "]" * brackets
 
+        if not output:
+            output = "[" * brackets + "Hyperlink Blocked" + "]" * brackets
+
         # Send the final output as a response to the interaction
         await interaction.response.send_message(output)
 
