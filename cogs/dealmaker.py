@@ -76,7 +76,7 @@ class Dealmaker(Cog):
                     output += "[" * brackets
 
                 # Add word in titlecase
-                output += word.title()
+                output += word[0].upper() + word[1:].lower()
 
                 # Randomly decide whether to close the bracket
                 if randint(0, 1) == 0:
