@@ -52,7 +52,7 @@ class Dealmaker(Cog):
         """
 
         # Split up message by words
-        words = replace_emoji(sub(r"<a?:\w+:\d+>", "", message.content), "").lower().split()
+        words = replace_emoji(sub(r"<a?:\w+:\d+>", "", message.clean_content), "").lower().split()
 
         # Number of characters to use for the entire message per bracket
         brackets = randint(1, 2)
